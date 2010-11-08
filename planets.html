@@ -42,9 +42,9 @@
       }
       var tmp = vec3.create();
       mat4.multiplyVec3(this.perspectiveMatrix, sun.absolutePosition, tmp);
-      var c = display.postEffects[0].material.floats.center;
+/*      var c = display.postEffects[0].material.floats.center;
       c[0] = 0.5+tmp[0]/200;
-      c[1] = 0.5+tmp[1]/250;
+      c[1] = 0.5+tmp[1]/250;*/
     });
     trackPlanet = function(name) {
       var obj = solarSystem.getNodeById(name);
@@ -53,8 +53,17 @@
       display.camera.setDistance(obj.body.radius * 15.0);
     };
     stopTracking = function() { tracking = null; };
-    trackPlanet('Earth');
-    display.postEffects.push(new Magi.RadialGlowFilter());
+    var planets = document.forms[0].planet;
+    trackSelected = function() {
+      for (var i=0; i<planets.length; i++) {
+        if (planets[i].checked) 
+          trackPlanet(planets[i].value);
+      }
+    }
+    for (var i=0; i<planets.length; i++)
+      planets[i].addEventListener('click', trackSelected, false);
+    trackSelected();
+//     display.postEffects.push(new Magi.RadialGlowFilter());
   }
 </script>
 <script>
@@ -420,9 +429,43 @@ SolarSystem = {
   }
 }
 </script>
+<style>
+  #controls {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    padding: 10px;
+    padding-right: 20px;
+    background-color: rgba(0,0,0,0.8);
+    color: #eee;
+    font-family: sans-serif;
+    border-radius: 8px;
+    z-index: 100;
+    font-size: 15px;
+  }
+  h3 {
+    margin: 0px;
+    margin-bottom: 8px;
+    font-size: 18px;
+    text-align: center;
+  }
+</style>
 
 </head>
 <body>
+<div id="controls">
+  <h3>Track planet</h3>
+  <form>
+  <input type="radio" name="planet" value="Mercury" /> Mercury<br>
+  <input type="radio" name="planet" value="Venus" /> Venus<br>
+  <input type="radio" name="planet" value="Earth" checked/> Earth<br>
+  <input type="radio" name="planet" value="Mars" /> Mars<br>
+  <input type="radio" name="planet" value="Jupiter" /> Jupiter<br>
+  <input type="radio" name="planet" value="Saturn" /> Saturn<br>
+  <input type="radio" name="planet" value="Uranus" /> Uranus<br>
+  <input type="radio" name="planet" value="Neptune" /> Neptune
+  </form>
+</div>
 <div id="display"></div>
 </body>
 </html>
